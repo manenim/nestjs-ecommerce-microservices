@@ -20,7 +20,6 @@ export class RedisThrottlerStorage implements ThrottlerStorage {
     blockDuration: number,
     _throttlerName: string,
   ): Promise<ThrottlerStorageRecord> {
-    const now = Date.now();
     const hitCount = await this.redis.incr(key);
     const keyTtl = await this.redis.ttl(key);
     if (keyTtl < 0) {
