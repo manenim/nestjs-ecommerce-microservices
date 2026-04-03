@@ -33,27 +33,19 @@ describe('OrderStateMachine', () => {
     });
 
     it('should reject DELIVERED → PENDING', () => {
-      expect(() => transitionOrder('DELIVERED', 'PENDING')).toThrow(
-        'Invalid order transition',
-      );
+      expect(() => transitionOrder('DELIVERED', 'PENDING')).toThrow('Invalid order transition');
     });
 
     it('should reject CANCELLED → CONFIRMED', () => {
-      expect(() => transitionOrder('CANCELLED', 'CONFIRMED')).toThrow(
-        'Invalid order transition',
-      );
+      expect(() => transitionOrder('CANCELLED', 'CONFIRMED')).toThrow('Invalid order transition');
     });
 
     it('should reject SHIPPED → CANCELLED (no cancel after ship)', () => {
-      expect(() => transitionOrder('SHIPPED', 'CANCELLED')).toThrow(
-        'Invalid order transition',
-      );
+      expect(() => transitionOrder('SHIPPED', 'CANCELLED')).toThrow('Invalid order transition');
     });
 
     it('should reject PENDING → SHIPPED (skip states)', () => {
-      expect(() => transitionOrder('PENDING', 'SHIPPED')).toThrow(
-        'Invalid order transition',
-      );
+      expect(() => transitionOrder('PENDING', 'SHIPPED')).toThrow('Invalid order transition');
     });
   });
 });
@@ -65,10 +57,7 @@ describe('OrderSagaOrchestrator', () => {
     orchestrator = new OrderSagaOrchestrator();
   });
 
-  function makeEvent(
-    eventType: string,
-    orderId: string,
-  ): EventEnvelope<Record<string, unknown>> {
+  function makeEvent(eventType: string, orderId: string): EventEnvelope<Record<string, unknown>> {
     return {
       eventId: 'evt-1',
       eventType: eventType as EventEnvelope<Record<string, unknown>>['eventType'],
@@ -100,16 +89,12 @@ describe('OrderSagaOrchestrator', () => {
   });
 
   it('should return CANCEL_AND_RELEASE on PAYMENT_FAILED', () => {
-    const result = orchestrator.handleSagaEvent(
-      makeEvent(KAFKA_TOPICS.PAYMENT_FAILED, 'order-4'),
-    );
+    const result = orchestrator.handleSagaEvent(makeEvent(KAFKA_TOPICS.PAYMENT_FAILED, 'order-4'));
     expect(result).toEqual({ action: 'CANCEL_AND_RELEASE', orderId: 'order-4' });
   });
 
   it('should return null for unrelated events', () => {
-    const result = orchestrator.handleSagaEvent(
-      makeEvent(KAFKA_TOPICS.USER_REGISTERED, 'order-5'),
-    );
+    const result = orchestrator.handleSagaEvent(makeEvent(KAFKA_TOPICS.USER_REGISTERED, 'order-5'));
     expect(result).toBeNull();
   });
 });
